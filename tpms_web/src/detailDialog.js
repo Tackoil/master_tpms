@@ -5,9 +5,9 @@ import {theme} from "./defaultTheme";
 import {
     AppBar,
     Button,
-    Dialog, Fab,
+    Fab,
     IconButton,
-    Slide, Snackbar,
+    Snackbar,
     Typography, Zoom
 } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";

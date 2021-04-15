@@ -3,15 +3,9 @@ import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
 import {
-    AppBar,
-    Box,
-    Button,
     Chip,
-    Container,
     Dialog,
-    Grid,
     Icon,
-    IconButton,
     Paper, Slide,
     Typography
 } from "@material-ui/core";

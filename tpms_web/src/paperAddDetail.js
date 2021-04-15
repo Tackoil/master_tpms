@@ -5,8 +5,8 @@ import {theme} from "./defaultTheme";
 import {
     Checkbox,
     Divider, FormControlLabel,
-    FormGroup, FormLabel, IconButton,
-    InputAdornment, InputLabel, MenuItem, Select,
+    FormGroup, FormLabel,
+    InputLabel, MenuItem, Select,
     TextField
 } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
@@ -14,7 +14,6 @@ import OneSelector from "./utils/oneSelector";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import MultiSelector from "./utils/multiSelector";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 const styles = theme => ({
     formGroup: {

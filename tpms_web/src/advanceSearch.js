@@ -48,10 +48,6 @@ class AdvanceSearch extends React.Component {
             selectedStudents: [],
             selectedTopics: [],
             selectedKeywords: [],
-            comAuthorList: [{uid: "000001", title: "作者1"}, {uid: "000002", title: "作者2"}, {uid: "000003", title: "作者3"}],
-            studentsList: [{uid: "000001", title: "学生1"}, {uid: "000002", title: "学生2"}, {uid: "000003", title: "学生3"}],
-            topicList: [{uid: "000001", title: "方向1"}, {uid: "000002", title: "方向2"}, {uid: "000003", title: "方向3"}],
-            keywordList: [{uid: "000001", title: "关键词1"}, {uid: "000002", title: "关键词2"}, {uid: "000003", title: "关键词3"}],
             snackOpen: false
         };
         this.mentorSelector = React.createRef();

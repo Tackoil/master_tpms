@@ -4,7 +4,7 @@ import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
 import {
     Divider,
-    FormGroup, FormLabel, IconButton,
+    FormGroup,
     InputAdornment,
     TextField
 } from "@material-ui/core";
@@ -13,7 +13,6 @@ import OneSelector from "./utils/oneSelector";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import MultiSelector from "./utils/multiSelector";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import {isfloat} from "./utils/eval";
 
 const styles = theme => ({

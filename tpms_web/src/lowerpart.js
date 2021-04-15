@@ -10,13 +10,8 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
-import {AppBar, Button, CssBaseline, Dialog, IconButton, Slide} from "@material-ui/core";
+import {CssBaseline, Dialog, Slide} from "@material-ui/core";
 import SearchFrag from "./searchFrag";
-import AddFrag from "./detailFrag";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
-import DetailFrag from "./detailFrag";
 import DetailDialog from "./detailDialog";
 
 const drawerWidth = 240;
