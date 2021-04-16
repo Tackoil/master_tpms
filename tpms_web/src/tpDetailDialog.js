@@ -13,7 +13,7 @@ import {
 import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from '@material-ui/icons/Edit';
-import DetailFrag from "./detailFrag";
+import TpDetailFrag from "./tpDetailFrag";
 import {getDataByUid} from "./utils/connector";
 
 const styles = theme => ({
@@ -34,7 +34,7 @@ const styles = theme => ({
 })
 
 
-class DetailDialog extends React.Component {
+class TpDetailDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -93,7 +93,7 @@ class DetailDialog extends React.Component {
                         {this.state.edit && <Button autoFocus color="inherit" onClick={this.handleSave}>保存</Button>}
                     </Toolbar>
                 </AppBar>
-                <DetailFrag ref={this.detailFrag} edit={this.state.edit} data={this.state.data}
+                <TpDetailFrag ref={this.detailFrag} edit={this.state.edit} data={this.state.data}
                             onTitleChange={this.handleTitleChange}/>
                 <Snackbar
                     anchorOrigin={{
@@ -125,8 +125,8 @@ class DetailDialog extends React.Component {
     }
 }
 
-DetailDialog.propTypes = {
+TpDetailDialog.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles(theme))(withTheme(DetailDialog));
+export default withStyles(styles(theme))(withTheme(TpDetailDialog));

@@ -36,7 +36,7 @@ const styles = theme => ({
     },
 })
 
-class DetailFrag extends React.Component {
+class TpDetailFrag extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -124,8 +124,8 @@ class DetailFrag extends React.Component {
     }
 }
 
-DetailFrag.propTypes = {
+TpDetailFrag.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles(theme))(withTheme(DetailFrag));
+export default withStyles(styles(theme))(withTheme(TpDetailFrag));

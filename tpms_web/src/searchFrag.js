@@ -9,6 +9,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import AdvanceSearch from "./advanceSearch";
 import SearchResult from "./searchResult";
 import {getQueryResult} from "./utils/connector";
+import clsx from "clsx";
 
 const styles = theme => ({
     searchRoot: {
@@ -25,6 +26,16 @@ const styles = theme => ({
     searchButton: {
         marginLeft: theme.spacing(1),
         padding: 10
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
     },
 })
 
@@ -69,15 +80,17 @@ class SearchFrag extends React.Component{
                         }}
                         type="search"
                         id="search_query"
-                        placeholder="搜索"
+                        placeholder="论文搜索"
                     />
                     <IconButton type="submit" className={classes.searchButton}
                                 onClick={this.handleSubmit}>
                         <SearchIcon />
                     </IconButton>
-                    <IconButton className={classes.searchButton}
+                    <IconButton className={clsx(classes.expand, {
+                        [classes.expandOpen]: this.state.advanceOpen,
+                    })}
                                 onClick={this.state.advanceOpen ? this.handleAdvanceClose : this.handleAdvanceOpen}>
-                        {this.state.advanceOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        <ExpandMoreIcon />
                     </IconButton>
                 </Paper>
                 <Collapse in={this.state.advanceOpen}>

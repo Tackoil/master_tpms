@@ -7,12 +7,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import React from "react";
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import BookIcon from '@material-ui/icons/Book';
 import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
 import {CssBaseline, Dialog, Slide} from "@material-ui/core";
 import SearchFrag from "./searchFrag";
-import DetailDialog from "./detailDialog";
+import TpDetailDialog from "./tpDetailDialog";
+import JournalFrag from "./journalFrag";
 
 const drawerWidth = 240;
 
@@ -113,6 +115,12 @@ class LowerPart extends React.Component {
                                 <ListItemIcon> <LibraryAddIcon/> </ListItemIcon>
                                 <ListItemText primary='添加新论文'/>
                             </ListItem>
+                            <ListItem button key='JournalView' onClick={() => {
+                                this.setState({func_code: 2})
+                            }}>
+                                <ListItemIcon> <BookIcon/> </ListItemIcon>
+                                <ListItemText primary='期刊列表'/>
+                            </ListItem>
                         </List>
                     </div>
                 </Drawer>
@@ -121,7 +129,9 @@ class LowerPart extends React.Component {
                     {(() => {
                             switch (this.state.func_code) {
                                 case 1:
-                                    return <SearchFrag/>;
+                                    return <SearchFrag />;
+                                case 2:
+                                    return <JournalFrag />;
                                 default:
                                     return null;
                             }
@@ -130,7 +140,7 @@ class LowerPart extends React.Component {
                 </main>
                 <Dialog fullScreen open={this.state.dialog} onClose={this.handleDialogClose}
                         TransitionComponent={Transition}>
-                    <DetailDialog ref={this.detailDialog} handleClose={this.handleDialogClose}/>
+                    <TpDetailDialog ref={this.detailDialog} handleClose={this.handleDialogClose}/>
                 </Dialog>
             </div>
         );

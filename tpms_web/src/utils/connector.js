@@ -104,3 +104,90 @@ export function getQueryResult() {
             favor: true,
         }];
 }
+
+export function getJournalList(){
+    return [
+        {
+            uid: 'J000001',
+            ename: 'Annual Meeting of the Association for Computational Linguistics',
+            short_name: 'ACL',
+            type: {
+                ccf: 'A',
+                core: 'A*',
+                qualis: 'A1',
+            },
+            deadline: 1612108800000,
+            info: 1620144000000
+        },
+        {
+            uid: 'J000002',
+            name: '计算机学报',
+            ename: 'Chinese Journal of Computers',
+            short_name: 'CJC',
+            type: {
+                ccf: 'A',
+            },
+        },
+        {
+            uid: 'J000003',
+            name: '我的期刊',
+            ename: 'My Journal for testing',
+            short_name: 'MJT',
+            type: {
+                ccf: 'S',
+                qualis: 'S+',
+            },
+            deadline: 1619798400000,
+            info: 1628092800000,
+        },
+        {
+            uid: 'J000004',
+            name: '我的期刊2',
+            ename: 'My Journal for testing II',
+            short_name: 'MJT2',
+            deadline: 1618416000000,
+            info: 1618416000000,
+        },
+        {
+            uid: 'J000001',
+            ename: 'Annual Meeting of the Association for Computational Linguistics',
+            short_name: 'ACL',
+            type: {
+                ccf: 'A',
+                core: 'A*',
+                qualis: 'A1',
+            },
+            deadline: 1612108800000,
+            info: 1620144000000
+        },
+        {
+            uid: 'J000002',
+            name: '计算机学报',
+            ename: 'Chinese Journal of Computers',
+            short_name: 'CJC',
+            type: {
+                ccf: 'A',
+            },
+        },
+        {
+            uid: 'J000003',
+            name: '我的期刊',
+            ename: 'My Journal for testing',
+            short_name: 'MJT',
+            type: {
+                ccf: 'S',
+                qualis: 'S+',
+            },
+            deadline: 1619798400000,
+            info: 1628092800000,
+        },
+        {
+            uid: 'J000004',
+            name: '我的期刊2',
+            ename: 'My Journal for testing II',
+            short_name: 'MJT2',
+            deadline: 1618416000000,
+            info: 1618416000000,
+        }
+    ]
+}

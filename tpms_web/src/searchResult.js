@@ -13,7 +13,7 @@ import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 import BookOutlinedIcon from "@material-ui/icons/BookOutlined";
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import DetailDialog from "./detailDialog";
+import DetailDialog from "./tpDetailDialog";
 
 const styles = theme => ({
     cardRoot: {
