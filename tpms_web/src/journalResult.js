@@ -2,32 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
-import {getJournalList} from "./utils/connector";
 import {
     Button,
     Card,
     Chip,
     Collapse, Divider,
-    Fab,
     FormGroup,
     IconButton,
-    InputBase,
-    Paper, Select, TextField,
-    Typography, useFormControl,
-    Zoom
+    TextField,
+    Typography,
 } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import {green, blue, grey, red, yellow} from "@material-ui/core/colors";
-import SearchFrag from "./searchFrag";
-import JournalFrag from "./journalFrag";
-import EditIcon from "@material-ui/icons/Edit";
+import {green, blue, red} from "@material-ui/core/colors";
 import FormControl from "@material-ui/core/FormControl";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from "clsx";
-import MultiSelector from "./utils/multiSelector";
 
 const styles = theme => ({
     cardRoot: {

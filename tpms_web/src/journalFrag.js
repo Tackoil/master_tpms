@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
 import {getJournalList} from "./utils/connector";
-import {Collapse, Dialog, Fab, IconButton, InputBase, Paper, Slide, Zoom} from "@material-ui/core";
+import {Collapse, Fab, IconButton, InputBase, Paper, Slide, Zoom} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from '@material-ui/icons/Add';
 import JournalResult from "./journalResult";

@@ -6,14 +6,12 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import React from "react";
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import BookIcon from '@material-ui/icons/Book';
 import PropTypes from "prop-types";
 import {withStyles, withTheme} from "@material-ui/styles";
 import {theme} from "./defaultTheme";
-import {CssBaseline, Dialog, Slide} from "@material-ui/core";
+import {CssBaseline} from "@material-ui/core";
 import SearchFrag from "./searchFrag";
-import TpDetailDialog from "./tpDetailDialog";
 import JournalFrag from "./journalFrag";
 
 const drawerWidth = 240;
@@ -64,10 +62,6 @@ const styles = theme => ({
     },
 });
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
 class LowerPart extends React.Component {
     constructor(props) {
         super(props);
@@ -76,10 +70,6 @@ class LowerPart extends React.Component {
             dialog: false,
         }
         this.detailDialog = React.createRef();
-    }
-
-    handleDialogClose = () =>{
-        this.setState({dialog: false});
     }
 
     render() {
@@ -109,12 +99,6 @@ class LowerPart extends React.Component {
                                 <ListItemIcon> <LibraryBooksIcon/> </ListItemIcon>
                                 <ListItemText primary='论文检索'/>
                             </ListItem>
-                            <ListItem button key='AddThesis' onClick={() => {
-                                this.setState({dialog: true})
-                            }}>
-                                <ListItemIcon> <LibraryAddIcon/> </ListItemIcon>
-                                <ListItemText primary='添加新论文'/>
-                            </ListItem>
                             <ListItem button key='JournalView' onClick={() => {
                                 this.setState({func_code: 2})
                             }}>
@@ -138,10 +122,6 @@ class LowerPart extends React.Component {
                         }
                     )()}
                 </main>
-                <Dialog fullScreen open={this.state.dialog} onClose={this.handleDialogClose}
-                        TransitionComponent={Transition}>
-                    <TpDetailDialog ref={this.detailDialog} handleClose={this.handleDialogClose}/>
-                </Dialog>
             </div>
         );
     }
