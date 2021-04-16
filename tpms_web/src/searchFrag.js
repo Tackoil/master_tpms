@@ -119,10 +119,10 @@ class SearchFrag extends React.Component{
                 <Collapse in={this.state.advanceOpen}>
                     <AdvanceSearch ref={this.advanceSearch}/>
                 </Collapse>
-                <div>
+                <Collapse in={this.state.resultData}>
                     {this.state.haveResult && <Button className={classes.exportButton} variant="contained" color="primary">导出检索结果</Button>}
                     {this.state.resultData.map((item) => <SearchResult key={this.uniqid()} result={item} />)}
-                </div>
+                </Collapse>
                 <Zoom in={!this.state.dialog}>
                     <Fab className={classes.fab} color="primary"
                          onClick={() => this.setState({dialog: true})}>
