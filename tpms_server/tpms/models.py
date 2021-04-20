@@ -9,5 +9,4 @@ class Journal(models.Model):
     deadline = models.BigIntegerField(blank=True, null=True)
     publish = models.BigIntegerField(blank=True, null=True)
 
-
-
+    all_field = ['name', 'ename', 'shortname', 'deadline', 'publish']

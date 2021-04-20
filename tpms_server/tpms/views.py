@@ -24,21 +24,11 @@ def journal_save(request):
         print(dt)
         if 'uid' in dt.keys():
             j = Journal.objects.get(id=int(dt['uid']))
-            print(dir(j))
-            j.name = dt['name'] if 'name' in dt.keys() else None
-            j.ename = dt['ename'] if 'ename' in dt.keys() else None
-            j.shortname = dt['shortname'] if 'shortname' in dt.keys() else None
-            j.deadline = dt['deadline'] if 'deadline' in dt.keys() else None
-            j.publish = dt['publish'] if 'publish' in dt.keys() else None
-            j.save()
         else:
-            Journal.objects.create(
-                name=dt['name'] if 'name' in dt.keys() else None,
-                ename=dt['ename'] if 'ename' in dt.keys() else None,
-                shortname=dt['shortname'] if 'shortname' in dt.keys() else None,
-                deadline=dt['deadline'] if 'deadline' in dt.keys() else None,
-                publish=dt['publish'] if 'publish' in dt.keys() else None,
-            )
+            j = Journal()
+        for key in j.all_field:
+            setattr(j, key, dt.get(key))
+        j.save()
         return HttpResponse("ok")
     else:
         return HttpResponse("Error")
