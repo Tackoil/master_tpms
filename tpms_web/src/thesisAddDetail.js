@@ -13,7 +13,7 @@ import OneSelector from "./utils/oneSelector";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import MultiSelector from "./utils/multiSelector";
-import {isfloat} from "./utils/eval";
+import {isfloat} from "./utils/utils";
 
 const styles = theme => ({
     formGroup: {

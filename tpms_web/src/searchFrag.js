@@ -119,7 +119,7 @@ class SearchFrag extends React.Component{
                 <Collapse in={this.state.advanceOpen}>
                     <AdvanceSearch ref={this.advanceSearch}/>
                 </Collapse>
-                <Collapse in={this.state.resultData}>
+                <Collapse in={this.state.haveResult}>
                     {this.state.haveResult && <Button className={classes.exportButton} variant="contained" color="primary">导出检索结果</Button>}
                     {this.state.resultData.map((item) => <SearchResult key={this.uniqid()} result={item} />)}
                 </Collapse>

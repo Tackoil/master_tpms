@@ -9,3 +9,11 @@ export function isfloat(oNum){
     }
     return true;
 }
+
+export function isDual(text){
+    return text.split(':').length === 2;
+}
+
+export function trim(str){
+    return str.replace(/(^\s*)|(\s*$)/g, "");
+}

@@ -1,14 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {withStyles, withTheme} from "@material-ui/styles";
-import {theme} from "./defaultTheme";
-import {getJournalList} from "./utils/connector";
-import {Collapse, Fab, IconButton, InputBase, Paper, Slide, Zoom} from "@material-ui/core";
+import React, { useState, useEffect } from 'react';
+import {journalListGet} from "./utils/connector";
+import {Collapse, Fab, IconButton, InputBase, makeStyles, Paper, Zoom} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from '@material-ui/icons/Add';
 import JournalResult from "./journalResult";
 
-const styles = theme => ({
+const useStyles = makeStyles((theme) => ({
     searchRoot: {
         padding: '2px 4px',
         display: 'flex',
@@ -31,64 +28,61 @@ const styles = theme => ({
         left: 'auto',
         right: theme.spacing(3),
     },
-})
+}));
 
-class JournalFrag extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            query: '',
-            data: [],
-            newJournal: false,
-        };
-        this.uniqid = require('uniqid');
-        this.state.data = getJournalList();
+
+export default function JournalFrag(props) {
+    const classes = useStyles();
+    const [query, setQuery] = useState('');
+    const [datalist, setData] = useState([]);
+    const [newJournal, setNewJournal] = useState(false);
+
+    const uniqid = require('uniqid')
+
+    useEffect(() => {
+        journalListGet('', (r) => setData(r))
+    }, [props])
+
+    const handleSubmit = () => {
+        journalListGet(query, (r) => setData(r))
     }
 
-    refresh = () => {
-        this.setState({newJournal: false})
-        this.setState({data: getJournalList()})
+    const handleNew = () => {
+        const newDatalist = [...datalist]
+        newDatalist.unshift({})
+        setData(newDatalist)
     }
 
-    render() {
-        const {classes} = this.props;
-        return (
-            <>
-                <Paper className={classes.searchRoot}>
-                    <InputBase
-                        className={classes.searchInput}
-                        onChange={(event) => {
-                            this.setState({query: event.target.value})
-                        }}
-                        type="search"
-                        id="search_query"
-                        placeholder="期刊搜索"
-                    />
-                    <IconButton type="submit" className={classes.searchButton}
-                                onClick={this.handleSubmit}>
-                        <SearchIcon/>
-                    </IconButton>
-                </Paper>
-                <Collapse in={this.state.newJournal} >
-                    <JournalResult key={this.uniqid()} new refresh={this.refresh}/>
-                </Collapse>
-                <div>{this.state.data.map((item) => <JournalResult key={this.uniqid()} data={item} refresh={this.refresh}/>)}</div>
-                <Zoom in={!this.state.dialog}>
-                    <Fab className={classes.fab} color="primary"
-                         onClick={() => this.setState({newJournal: true})}>
-                        <AddIcon/>
-                    </Fab>
-                </Zoom>
-            </>
-        );
+    const handleCloseNone = () => {
+        const newDatalist = [...datalist]
+        newDatalist.shift()
+        setData(newDatalist)
     }
+
+    return (
+        <>
+            <Paper className={classes.searchRoot}>
+                <InputBase
+                    className={classes.searchInput}
+                    onChange={(event) => {
+                        setQuery(event.target.value)
+                    }}
+                    id="search_query"
+                    placeholder="期刊搜索"
+                />
+                <IconButton type="submit" className={classes.searchButton} onClick={handleSubmit}>
+                    <SearchIcon/>
+                </IconButton>
+            </Paper>
+            <div>{datalist.map((item) => <JournalResult data={item}
+                                                        closeNone={handleCloseNone}
+                                                    key={uniqid()}/>)}</div>
+            <Zoom in={!newJournal}>
+                <Fab className={classes.fab} color="primary"
+                     onClick={handleNew}>
+                    <AddIcon/>
+                </Fab>
+            </Zoom>
+        </>
+    );
 }
-
-JournalFrag.propTypes = {
-    classes: PropTypes.object.isRequired
-,
-}
-
-;
-
-export default withStyles(styles(theme))(withTheme(JournalFrag));

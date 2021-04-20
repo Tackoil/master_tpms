@@ -17,6 +17,7 @@ class MultiSelector extends React.Component {
             fixValue: [],
             value: [],
             inputValue: '',
+            error: false,
         };
     }
 
@@ -53,7 +54,12 @@ class MultiSelector extends React.Component {
 
     handleOnInputChange = (event, newInputValue) => {
         this.setState({inputValue: newInputValue});
-        this.updateMentorList(newInputValue);
+        if(this.props.rule !== undefined && newInputValue !== ''){
+            this.setState({error: !this.props.rule(newInputValue)})
+        }
+        if(!this.props.noSuggest){
+            this.updateMentorList(newInputValue);
+        }
     }
 
     render() {
@@ -81,6 +87,8 @@ class MultiSelector extends React.Component {
                 renderInput={(params) => (
                     <TextField
                         {...params}
+                        error={this.state.error}
+                        helperText={this.state.error ? '以 评分方: 评分 方式输入' : ''}
                         label={this.props.label}
                     />
                 )}
