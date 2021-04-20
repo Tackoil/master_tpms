@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {journalListGet} from "./utils/connector";
-import {Collapse, Fab, IconButton, InputBase, makeStyles, Paper, Zoom} from "@material-ui/core";
+import {Fab, IconButton, InputBase, makeStyles, Paper, Zoom} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from '@material-ui/icons/Add';
 import JournalResult from "./journalResult";

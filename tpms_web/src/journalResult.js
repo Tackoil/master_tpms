@@ -1,7 +1,4 @@
 import React, {useEffect, useState} from "react";
-import PropTypes from "prop-types";
-import {withStyles, withTheme} from "@material-ui/styles";
-import {theme} from "./defaultTheme";
 import {
     Button,
     Card,
@@ -18,9 +15,7 @@ import FormControl from "@material-ui/core/FormControl";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from "clsx";
-import MultiSelector from "./utils/multiSelector";
 import {journalSave} from "./utils/connector";
-import {isDual, trim} from "./utils/utils";
 
 const useStyles = makeStyles((theme) => ({
     cardRoot: {
@@ -110,6 +105,7 @@ export default function JournalResult(props) {
             setPublish(data.publish === null ? null : new Date(data.publish));
             setName(data.name === null ? '' : data.name);
             setEname(data.ename === null ? '' : data.ename);
+            setShortname(data.shortname === null ? '' : data.shortname);
         }
     }, [data])
 
@@ -164,7 +160,7 @@ export default function JournalResult(props) {
     }
 
     const handleCancel = () => {
-        if(name === '' && ename === ''){
+        if(Object.keys(data).length === 0){
             closeNone()
         }
         setDeadline(tempState.deadline === undefined ? null : tempState.deadline);
@@ -286,6 +282,7 @@ export default function JournalResult(props) {
                     {edit && <Button onClick={handleCancel}> 取消 </Button>}
                 </Collapse>
             </Card>
+
         </>
     );
 }
