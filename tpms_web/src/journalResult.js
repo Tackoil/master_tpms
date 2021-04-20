@@ -5,7 +5,7 @@ import {
     Chip,
     Collapse, Divider,
     FormGroup,
-    IconButton, makeStyles,
+    IconButton, makeStyles, Snackbar,
     TextField,
     Typography,
 } from "@material-ui/core";
@@ -16,6 +16,8 @@ import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from "clsx";
 import {journalSave} from "./utils/connector";
+import CloseIcon from "@material-ui/icons/Close";
+import {Alert} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     cardRoot: {
@@ -91,6 +93,8 @@ export default function JournalResult(props) {
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(false);
     const [error, setError] = useState(false);
+    const [successSnackOpen, setSuccessSnackOpen] = useState(false);
+    const [errorSnackOpen, setErrorSnackOpen] = useState(false);
     const [tempState, setTempState] = useState({});
 
     const typeSelector = React.createRef();
@@ -144,18 +148,18 @@ export default function JournalResult(props) {
 
     const handleSave = () => {
         if(!error){
-            let success = journalSave({
+            journalSave({
                 uid: data.uid === undefined ? undefined : data.uid,
                 deadline: deadline === null ? undefined : deadline.getTime(),
                 publish: publish === null ? undefined : publish.getTime(),
                 name: name === '' ? undefined : name,
                 ename: ename === '' ? undefined : ename,
                 shortname: shortname === '' ? undefined : shortname,
-            })
-            if (success) {
+            }, () => {
                 setEdit(false)
                 setOpen(false)
-            }
+                setSuccessSnackOpen(true)
+            }, () => setErrorSnackOpen(true))
         }
     }
 
@@ -282,7 +286,32 @@ export default function JournalResult(props) {
                     {edit && <Button onClick={handleCancel}> 取消 </Button>}
                 </Collapse>
             </Card>
-
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={successSnackOpen}
+                autoHideDuration={6000}
+                onClose={() => setSuccessSnackOpen(false)}
+            >
+                <Alert onClose={() => setSuccessSnackOpen(false)} severity="success">
+                    已保存
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={errorSnackOpen}
+                autoHideDuration={6000}
+                onClose={() => setErrorSnackOpen(false)}
+            >
+                <Alert onClose={() => setErrorSnackOpen(false)} severity="error">
+                    保存失败，请检查网络设置
+                </Alert>
+            </Snackbar>
         </>
     );
 }

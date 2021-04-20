@@ -1,14 +1,14 @@
 import axios from "axios";
 
-export function journalSave(valueDict) {
+export function journalSave(valueDict, handleSuccess, handleError) {
     return axios.post('http://localhost:8000/journal_save/', valueDict,
         )
         .then(function (response) {
-            return(response.status === 200)
+            handleSuccess()
         })
         .catch(function (error) {
             console.log(error)
-            return false
+            handleError()
         })
 }
 
