@@ -2,7 +2,7 @@ import axios from "axios";
 
 export function journalSave(valueDict, handleSuccess, handleError) {
     return axios.post('http://localhost:8000/journal_save/', valueDict,
-        )
+    )
         .then(function (response) {
             handleSuccess()
         })
@@ -13,12 +13,11 @@ export function journalSave(valueDict, handleSuccess, handleError) {
 }
 
 export function journalListGet(query, resultFunc) {
-    if(query === undefined) query = '';
+    if (query === undefined) query = '';
     axios.get(`http://localhost:8000/journal_list_get/?q=${query}`,
     )
         .then(function (response) {
-            if(response.status === 200){
-                console.info(response.data)
+            if (response.status === 200) {
                 resultFunc(response.data.map((item) => Object.assign(item["fields"], {"uid": item["pk"]})))
             }
         })
@@ -133,5 +132,114 @@ export function getQueryResult() {
                 {uid: 'k000006', name: 'FFF'},
             ],
             favor: true,
-        }];
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+        {
+            uid: 'a00000002',
+            thesisOrPaper: 'paper',
+            title: '基于EEE的FFF在GGG上的HHH',
+            author: [
+                {uid: '000001', name: '小明明'},
+                {uid: '000002', name: '伊文斯'},
+                {uid: '000003', name: '大史'}
+            ],
+            data: '',
+            intro: '罗辑伸手挥挥，像抚摸天鹅绒般感受着黑暗的质感，“宇宙就是一座黑暗深林，每个文明都是带枪的猎人，像幽灵般潜行于林间，轻轻拨开挡路的树枝，竭力不让脚步发出一点儿声音，连呼吸都小心翼翼，他必须小心，因为林中到处都有与他一样潜行的猎人。如果他发现了别的生命，不管是不是猎人，不管是天使还是恶魔，不管是娇嫩的婴儿还是步履蹒跚的老人，也不管是天仙般的少女还是天神般的男孩，能做的只有一件事：开枪消灭之。在这片深林中，他人就是地狱，就是永恒的威胁，任何暴露自己存在的生命都将很快被消灭。这就是宇宙文明的图景，这就是费米悖论的解释。”',
+            keyword: [
+                {uid: 'k000004', name: 'DDD'},
+                {uid: 'k000005', name: 'EEE'},
+                {uid: 'k000006', name: 'FFF'},
+            ],
+            favor: true,
+        },
+    ];
 }

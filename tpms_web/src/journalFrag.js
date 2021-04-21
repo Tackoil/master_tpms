@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {journalListGet} from "./utils/connector";
-import {Fab, IconButton, InputBase, makeStyles, Paper, Zoom} from "@material-ui/core";
+import {
+    CircularProgress,
+    Collapse,
+    Fab,
+    IconButton,
+    InputBase,
+    makeStyles,
+    Paper,
+    Snackbar,
+    Zoom
+} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from '@material-ui/icons/Add';
 import JournalResult from "./journalResult";
+import {Alert} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     searchRoot: {
@@ -28,6 +39,12 @@ const useStyles = makeStyles((theme) => ({
         left: 'auto',
         right: theme.spacing(3),
     },
+    loading: {
+        marginTop: theme.spacing(1),
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+    }
 }));
 
 
@@ -36,15 +53,25 @@ export default function JournalFrag(props) {
     const [query, setQuery] = useState('');
     const [datalist, setData] = useState([]);
     const [newJournal, setNewJournal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [successSnackOpen, setSuccessSnackOpen] = useState(false);
+    const [errorSnackOpen, setErrorSnackOpen] = useState(false);
 
     const uniqid = require('uniqid')
 
     useEffect(() => {
-        journalListGet('', (r) => setData(r))
-    }, [props])
+        setLoading(true);
+        journalListGet('', (r) => {
+            setData(r)
+            setLoading(false)
+        })
+    }, [])
 
     const handleSubmit = () => {
-        journalListGet(query, (r) => setData(r))
+        journalListGet(query, (r) => {
+            setData(r)
+            setLoading(false)
+        })
     }
 
     const handleNew = () => {
@@ -57,6 +84,14 @@ export default function JournalFrag(props) {
         const newDatalist = [...datalist]
         newDatalist.shift()
         setData(newDatalist)
+    }
+
+    const handleSnackbar = (state) => {
+        if(state){
+            setSuccessSnackOpen(true)
+        }else{
+            setErrorSnackOpen(true)
+        }
     }
 
     return (
@@ -74,15 +109,45 @@ export default function JournalFrag(props) {
                     <SearchIcon/>
                 </IconButton>
             </Paper>
-            <div>{datalist.map((item) => <JournalResult data={item}
-                                                        closeNone={handleCloseNone}
-                                                    key={uniqid()}/>)}</div>
+            {loading && <CircularProgress className={classes.loading}/>}
+            <Collapse in={!loading} >
+                <div>{datalist.map((item) => <JournalResult data={item}
+                                                            closeNone={handleCloseNone}
+                                                            onSnackbar={handleSnackbar}
+                                                            key={uniqid()}/>)}</div>
+            </Collapse>
             <Zoom in={!newJournal}>
                 <Fab className={classes.fab} color="primary"
                      onClick={handleNew}>
                     <AddIcon/>
                 </Fab>
             </Zoom>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={successSnackOpen}
+                autoHideDuration={6000}
+                onClose={() => setSuccessSnackOpen(false)}
+            >
+                <Alert onClose={() => setSuccessSnackOpen(false)} severity="success">
+                    已保存
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={errorSnackOpen}
+                autoHideDuration={6000}
+                onClose={() => setErrorSnackOpen(false)}
+            >
+                <Alert onClose={() => setErrorSnackOpen(false)} severity="error">
+                    保存失败，请检查网络设置
+                </Alert>
+            </Snackbar>
         </>
     );
 }
