@@ -68,6 +68,7 @@ export default function JournalFrag(props) {
     }, [])
 
     const handleSubmit = () => {
+        setLoading(true);
         journalListGet(query, (r) => {
             setData(r)
             setLoading(false)
@@ -80,10 +81,8 @@ export default function JournalFrag(props) {
         setData(newDatalist)
     }
 
-    const handleCloseNone = () => {
-        const newDatalist = [...datalist]
-        newDatalist.shift()
-        setData(newDatalist)
+    const refresh = () => {
+        handleSubmit()
     }
 
     const handleSnackbar = (state) => {
@@ -112,8 +111,8 @@ export default function JournalFrag(props) {
             {loading && <CircularProgress className={classes.loading}/>}
             <Collapse in={!loading} >
                 <div>{datalist.map((item) => <JournalResult data={item}
-                                                            closeNone={handleCloseNone}
-                                                            onSnackbar={handleSnackbar}
+                                                            refresh={refresh}
+                                                            onSnackOpen={handleSnackbar}
                                                             key={uniqid()}/>)}</div>
             </Collapse>
             <Zoom in={!newJournal}>

@@ -5,7 +5,7 @@ import {
     Chip,
     Collapse, Divider,
     FormGroup,
-    IconButton, makeStyles,
+    IconButton, makeStyles, Snackbar,
     TextField,
     Typography,
 } from "@material-ui/core";
@@ -16,6 +16,8 @@ import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from "clsx";
 import {journalSave} from "./utils/connector";
+import DeleteIcon from '@material-ui/icons/Delete';
+import {Alert} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     cardRoot: {
@@ -79,7 +81,7 @@ const callStateDict = {
 }
 
 export default function JournalResult(props) {
-    const {data, closeNone, onSnackbar} = props;
+    const {data, refresh, onSnackOpen} = props;
     const classes = useStyles();
     const [callState, setCallState] = useState(0);
     const [deadline, setDeadline] = useState(null);
@@ -144,7 +146,7 @@ export default function JournalResult(props) {
     const handleSave = () => {
         if(!error){
             journalSave({
-                uid: data.uid === undefined ? undefined : data.uid,
+                pk: data.pk === undefined ? undefined : data.pk,
                 deadline: deadline === null ? undefined : deadline.getTime(),
                 publish: publish === null ? undefined : publish.getTime(),
                 name: name === '' ? undefined : name,
@@ -152,15 +154,15 @@ export default function JournalResult(props) {
                 shortname: shortname === '' ? undefined : shortname,
             }, () => {
                 setEdit(false)
-                setOpen(false)
-                onSnackbar(true)
-            }, () => onSnackbar(false))
+                onSnackOpen(true)
+                refresh()
+            }, () => onSnackOpen(false))
         }
     }
 
     const handleCancel = () => {
         if(Object.keys(data).length === 0){
-            closeNone()
+            refresh()
         }
         setDeadline(tempState.deadline === undefined ? null : tempState.deadline);
         setPublish(tempState.publish === undefined ? null : tempState.publish);

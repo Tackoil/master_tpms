@@ -18,7 +18,7 @@ export function journalListGet(query, resultFunc) {
     )
         .then(function (response) {
             if (response.status === 200) {
-                resultFunc(response.data.map((item) => Object.assign(item["fields"], {"uid": item["pk"]})))
+                resultFunc(response.data)
             }
         })
         .catch(function (error) {
