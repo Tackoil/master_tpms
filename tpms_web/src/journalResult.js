@@ -5,7 +5,7 @@ import {
     Chip,
     Collapse, Divider,
     FormGroup,
-    IconButton, makeStyles, Snackbar,
+    IconButton, makeStyles,
     TextField,
     Typography,
 } from "@material-ui/core";
@@ -15,9 +15,8 @@ import FormControl from "@material-ui/core/FormControl";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import clsx from "clsx";
-import {journalSave} from "./utils/connector";
-import DeleteIcon from '@material-ui/icons/Delete';
-import {Alert} from "@material-ui/lab";
+import {journalSave, rateListGet, rateRender} from "./utils/connector";
+import UtilSelector from "./utils/utilSelector";
 
 const useStyles = makeStyles((theme) => ({
     cardRoot: {
@@ -89,25 +88,25 @@ export default function JournalResult(props) {
     const [name, setName] = useState('');
     const [ename, setEname] = useState('');
     const [shortname, setShortname] = useState('');
-    const [type, setType] = useState([]);
+    const [rate, setRate] = useState([]);
     const [open, setOpen] = useState(false);
     const [edit, setEdit] = useState(false);
     const [error, setError] = useState(false);
     const [tempState, setTempState] = useState({});
 
-    const typeSelector = React.createRef();
     const uniqid = require('uniqid');
 
     useEffect(() => {
-        if(Object.keys(data).length === 0){
+        if (Object.keys(data).length === 0) {
             setOpen(true);
             setEdit(true);
-        }else{
+        } else {
             setDeadline(data.deadline === null ? null : new Date(data.deadline));
             setPublish(data.publish === null ? null : new Date(data.publish));
             setName(data.name === null ? '' : data.name);
             setEname(data.ename === null ? '' : data.ename);
             setShortname(data.shortname === null ? '' : data.shortname);
+            setRate(data.rate === null ? [] : data.rate);
         }
     }, [data])
 
@@ -127,10 +126,9 @@ export default function JournalResult(props) {
     }, [deadline, publish])
 
     useEffect(() => {
-        if(name === '' && ename === ''){
+        if (name === '' && ename === '') {
             setError(true)
-        }
-        else{
+        } else {
             setError(false)
         }
     }, [name, ename])
@@ -144,7 +142,7 @@ export default function JournalResult(props) {
     }
 
     const handleSave = () => {
-        if(!error){
+        if (!error) {
             journalSave({
                 pk: data.pk === undefined ? undefined : data.pk,
                 deadline: deadline === null ? undefined : deadline.getTime(),
@@ -152,6 +150,7 @@ export default function JournalResult(props) {
                 name: name === '' ? undefined : name,
                 ename: ename === '' ? undefined : ename,
                 shortname: shortname === '' ? undefined : shortname,
+                rate: rate.length === 0 ? undefined : rate,
             }, () => {
                 setEdit(false)
                 onSnackOpen(true)
@@ -161,7 +160,7 @@ export default function JournalResult(props) {
     }
 
     const handleCancel = () => {
-        if(Object.keys(data).length === 0){
+        if (Object.keys(data).length === 0) {
             refresh()
         }
         setDeadline(tempState.deadline === undefined ? null : tempState.deadline);
@@ -185,28 +184,30 @@ export default function JournalResult(props) {
                         {shortname !== '' && `(${shortname})`}
                     </Typography>
                     {name !== '' &&
-                        <Typography className={classes.myIcon} variant='overline'>{ename}</Typography>}
+                    <Typography className={classes.myIcon} variant='overline'>{ename}</Typography>}
                     {callState !== 0 &&
-                        <Chip label={callStateDict[callState].label}
-                              variant='outlined'
-                              style={{
-                                  backgroundColor: callStateDict[callState].color[400],
-                                  color: "white"
-                              }}/>}
+                    <Chip label={callStateDict[callState].label}
+                          variant='outlined'
+                          style={{
+                              backgroundColor: callStateDict[callState].color[400],
+                              color: "white"
+                          }}/>}
                     <IconButton className={clsx(classes.expand, {[classes.expandOpen]: open,})}
                                 onClick={() => handleOpen()}>
                         <ExpandMoreIcon/>
                     </IconButton>
                 </div>
-{/*                {this.state.type.length !== 0 &&
-                <div className={classes.oneLine}>
-                    <Typography className={classes.keywordTitle}>评级：</Typography>
-                    {this.state.type.map((item) =>
-                        <Chip className={classes.myIcon} key={this.uniqid()}
-                              label={item.name}/>
-                    )}
-                </div>
-                }*/}
+                <Collapse in={!open}>
+                    {rate.length !== 0 &&
+                    <div className={classes.oneLine}>
+                        <Typography className={classes.keywordTitle}>评级：</Typography>
+                        {rate.map((item) =>
+                            <Chip className={classes.myIcon} key={uniqid()}
+                                  label={rateRender(item)}/>
+                        )}
+                    </div>
+                    }
+                </Collapse>
                 <Collapse in={open}>
                     <Divider/>
                     <FormGroup row className={classes.formGroup}>
@@ -269,13 +270,16 @@ export default function JournalResult(props) {
                             </MuiPickersUtilsProvider>
                         </FormControl>
                     </FormGroup>
-{/*                    <FormGroup row className={classes.formGroup}>
+                    <FormGroup row className={classes.formGroup}>
                         <FormControl className={classes.formControl}>
-                            <MultiSelector ref={typeSelector} allowNew noSuggest readOnly={!edit}
-                                           rule={isDual}
-                                           label="评级"/>
+                            <UtilSelector multiple noSuggest readOnly={!edit}
+                                          value={rate}
+                                          onChange={(value) => setRate(value)}
+                                          connector={(q, r) => rateListGet(q, r)}
+                                          render={rateRender}
+                                          label="评级"/>
                         </FormControl>
-                    </FormGroup>*/}
+                    </FormGroup>
                     {edit ?
                         <Button onClick={handleSave} disabled={error} color='primary'> 保存 </Button> :
                         <Button onClick={handleEdit} color='primary'> 编辑 </Button>

@@ -15,6 +15,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from '@material-ui/icons/Edit';
 import TpDetailFrag from "./tpDetailFrag";
 import {getDataByUid} from "./utils/connector";
+import {Alert} from "@material-ui/lab";
 
 const styles = theme => ({
     detailTitle: {
@@ -103,16 +104,11 @@ class TpDetailDialog extends React.Component {
                     open={this.state.snackOpen}
                     autoHideDuration={6000}
                     onClose={this.handleSnackClose}
-                    message="保存失败，请检查必填项与其他格式要求。"
-                    action={
-                        <React.Fragment>
-                            <IconButton size="small" aria-label="close" color="inherit"
-                                        onClick={this.handleSnackClose}>
-                                <CloseIcon fontSize="small" />
-                            </IconButton>
-                        </React.Fragment>
-                    }
-                />
+                >
+                    <Alert onClose={this.handleSnackClose} severity="error">
+                        保存失败，请检查必填项与其他格式要求。
+                    </Alert>
+                </Snackbar>
                 <Zoom in={!this.state.edit}>
                     <Fab className={classes.fab} color="primary"
                          onClick={() => this.setState({edit: true})}>

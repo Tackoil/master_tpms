@@ -9,11 +9,26 @@ import {
     TextField
 } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
-import OneSelector from "./utils/oneSelector";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import MultiSelector from "./utils/multiSelector";
+import UtilSelector from "./utils/utilSelector";
 import {isfloat} from "./utils/utils";
+import {
+    authorListGet,
+    authorRender,
+    keywordBuilder,
+    keywordListGet,
+    keywordRender,
+    outcomeListGet, outcomeRender,
+    projectListGet,
+    projectRender,
+    topicBuilder,
+    topicListGet,
+    topicRender,
+    typeBuilder,
+    typeListGet,
+    typeRender
+} from "./utils/connector";
 
 const styles = theme => ({
     formGroup: {
@@ -35,32 +50,32 @@ class ThesisAddDetail extends React.Component {
         super(props);
         this.state = {
             date: null,
-            thesis_id: '',
+            pk: '',
             rate: '',
             rateError: false,
+            mentor: null,
+            student: null,
+            type: null,
+            keywords: [],
+            topics: [],
+            projects: [],
+            outcomes: [],
         };
-        this.mentorSelector = React.createRef();
-        this.studentSelector = React.createRef();
-        this.typeSelector = React.createRef();
-        this.keywordSelector = React.createRef();
-        this.topicSelector = React.createRef();
-        this.projectSelector = React.createRef();
-        this.outcomeSelector = React.createRef();
     }
 
     componentDidMount() {
         if(!this.props.edit && this.props.data !== undefined){
             let data = this.props.data;
             this.setState({data: data.date});
-            this.mentorSelector.current.setValue(data.mentor);
-            this.studentSelector.current.setValue(data.author[0]);
-            this.typeSelector.current.setValue(data.type);
-            this.setState({thesis_id: data.uid});
+            this.setState({mentor: data.mentor});
+            this.setState({student: data.student});
+            this.setState({type: data.type});
+            this.setState({pk: data.pk});
             this.setState({rate: data.rate});
-            this.keywordSelector.current.setValue(data.keyword);
-            this.topicSelector.current.setValue(data.topic);
-            this.projectSelector.current.setValue(data.project);
-            this.outcomeSelector.current.setValue(data.outcome);
+            this.setState({keywords: data.keywords});
+            this.setState({topics: data.topics});
+            this.setState({projects: data.projects});
+            this.setState({outcomes: data.outcomes});
         }
     }
 
@@ -68,15 +83,15 @@ class ThesisAddDetail extends React.Component {
         return {
             error: this.state.rateError,
             date: this.state.date,
-            mentor: this.mentorSelector.current.getValue(),
-            student: this.studentSelector.current.getValue(),
-            type: this.typeSelector.current.getValue(),
-            thesis_id: this.state.thesis_id,
+            mentor: this.state.mentor,
+            student: this.state.student,
+            type: this.state.type,
+            pk: this.state.pk,
             rate: this.state.rate,
-            keyword: this.keywordSelector.current.getValue(),
-            topic: this.topicSelector.current.getValue(),
-            project: this.projectSelector.current.getValue(),
-            outcome: this.outcomeSelector.current.getValue(),
+            keywords: this.state.keywords,
+            topics: this.state.topics,
+            projects: this.state.projects,
+            outcomes: this.state.outcomes,
         }
     }
 
@@ -100,6 +115,7 @@ class ThesisAddDetail extends React.Component {
                     <FormControl className={classes.formControlFix}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <DatePicker disableFuture autoOk clearable
+                                        inputVariant="outlined"
                                         readOnly={!this.props.edit}
                                         size='medium' variant="dialog"
                                         label="日期" format="yyyy/MM/dd"
@@ -111,24 +127,41 @@ class ThesisAddDetail extends React.Component {
                         </MuiPickersUtilsProvider>
                     </FormControl>
                     <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.mentorSelector} readOnly={!this.props.edit} label="指导老师" labelId="mentor_label" query="mentor"/>
+                        <UtilSelector connector={(q, r) => authorListGet(q, 'men', r)}
+                                      render={authorRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.mentor}
+                                      onChange={(value) => this.setState({mentor: value})}
+                                      label="指导老师"/>
                     </FormControl>
                     <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.studentSelector} readOnly={!this.props.edit} label="作者" labelId="student_label" query="student"/>
+                        <UtilSelector connector={(q, r) => authorListGet(q, 'stu', r)}
+                                      render={authorRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.student}
+                                      onChange={(value) => this.setState({student: value})}
+                                      label="作者"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.typeSelector} readOnly={!this.props.edit} label="论文类型" labelId="type_label" query="type"/>
+                        <UtilSelector allowNew
+                                      buildNew={typeBuilder}
+                                      connector={(q, r) => typeListGet(q, r)}
+                                      render={typeRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.type}
+                                      onChange={(value) => this.setState({type: value})}
+                                      label="类型"/>
                     </FormControl>
                     <FormControl className={classes.formControlFix}>
-                        <TextField required label="论文编号" id="thesis_id" value={this.state.thesis_id}
-                                   onChange={event => this.setState({thesis_id: event.target.value})}
+                        <TextField required variant="outlined" label="论文编号" id="thesis_id" value={this.state.pk}
+                                   onChange={event => this.setState({pk: event.target.value})}
                                    InputProps={{readOnly: !this.props.edit}}
                         />
                     </FormControl>
                     <FormControl className={classes.formControlFix}>
-                        <TextField label="重复率" id="rate" value={this.state.rate}
+                        <TextField label="重复率" variant="outlined" id="rate" value={this.state.rate}
                                    onChange={this.handleRateChange}
                                    error={this.state.rateError}
                                    helperText={this.state.rateError ? '请输入0至100的小数' : ''}
@@ -141,21 +174,46 @@ class ThesisAddDetail extends React.Component {
                 <Divider/>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.keywordSelector} readOnly={!this.props.edit} allowNew label="关键词" labelId="keyword"
-                                       query="keyword"/>
+                        <UtilSelector multiple allowNew
+                                      buildNew={keywordBuilder}
+                                      connector={(q, r) => keywordListGet(q, r)}
+                                      render={keywordRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.keywords}
+                                      onChange={(value) => this.setState({keywords: value})}
+                                      label="关键词"/>
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.topicSelector} readOnly={!this.props.edit} allowNew label="研究方向" labelId="topic" query="topic"/>
+                        <UtilSelector multiple allowNew
+                                      buildNew={topicBuilder}
+                                      connector={(q, r) => topicListGet(q, r)}
+                                      render={topicRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.topics}
+                                      onChange={(value) => this.setState({topics: value})}
+                                      label="研究方向"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <MultiSelector ref={this.projectSelector} readOnly={!this.props.edit} label="关联项目" labelId="project" query="project"/>
+                        <UtilSelector multiple
+                                      connector={(q, r) => projectListGet(q, r)}
+                                      render={projectRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.projects}
+                                      onChange={(value) => this.setState({projects: value})}
+                                      label="关联项目"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <MultiSelector ref={this.outcomeSelector} readOnly={!this.props.edit} label="关联成果" labelId="outcome" query="outcome"/>
+                        <UtilSelector multiple
+                                      connector={(q, r) => outcomeListGet(q, r)}
+                                      render={outcomeRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.outcomes}
+                                      onChange={(value) => this.setState({outcomes: value})}
+                                      label="关联成果"/>
                     </FormControl>
                 </FormGroup>
             </>

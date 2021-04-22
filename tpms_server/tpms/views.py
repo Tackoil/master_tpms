@@ -2,7 +2,7 @@ import json
 import logging
 
 from django.http import HttpResponse
-from .models import Journal
+from .models import *
 from django.core import serializers
 
 
@@ -29,6 +29,17 @@ def journal_list_get(request):
         print(query)
         jl = []
         for item in Journal.objects.all():
+            jl.append(item.export_to_json())
+        jl = json.dumps(jl)
+        return HttpResponse(jl)
+    else:
+        return HttpResponse("Error")
+
+
+def rate_list_get(request):
+    if request.method == 'GET':
+        jl = []
+        for item in JournalRating.objects.all():
             jl.append(item.export_to_json())
         jl = json.dumps(jl)
         return HttpResponse(jl)

@@ -10,10 +10,17 @@ import {
     TextField
 } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
-import OneSelector from "./utils/oneSelector";
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import MultiSelector from "./utils/multiSelector";
+import UtilSelector from "./utils/utilSelector";
+import {
+    authorListGet,
+    authorRender,
+    journalListGet,
+    journalRender, keywordBuilder,
+    keywordListGet,
+    keywordRender, outcomeListGet, outcomeRender, projectListGet, projectRender, topicBuilder, topicListGet, topicRender
+} from "./utils/connector";
 
 const styles = theme => ({
     formGroup: {
@@ -35,61 +42,60 @@ class PaperAddDetail extends React.Component {
         super(props);
         this.state = {
             date: null,
-            paper_id: '',
-            state: 'published',
+            pk: '',
+            state: {pk: 'published', name: '已发布'},
             withInduc: false,
             withGov: false,
             withInt: false,
             withInterd: false,
+            mentor: null,
+            authors: [],
+            comAuthors: [],
+            journal: null,
+            keywords: [],
+            topics: [],
+            projects: [],
+            outcomes: [],
         };
-        this.mentorSelector = React.createRef();
-        this.authorSelector = React.createRef();
-        this.comAuthorSelector = React.createRef();
-        this.journalSelector = React.createRef();
-        this.keywordSelector = React.createRef();
-        this.topicSelector = React.createRef();
-        this.projectSelector = React.createRef();
-        this.outcomeSelector = React.createRef();
     }
 
     componentDidMount() {
         if(!this.props.edit && this.props.data !== undefined){
             let data = this.props.data;
-            this.setState({data: data.date});
-            this.mentorSelector.current.setValue(data.mentor);
-            this.authorSelector.current.setValue(data.author);
-            this.comAuthorSelector.current.setValue(data.comAuthor);
-            this.journalSelector.current.setValue(data.journal);
-            this.setState({paper_id: data.uid});
-            this.keywordSelector.current.setValue(data.keyword);
-            this.topicSelector.current.setValue(data.topic);
+            this.setState({date: data.date});
+            this.setState({mentor: data.mentor});
+            this.setState({authors: data.authors});
+            this.setState({comAuthors: data.comAuthors});
+            this.setState({journal: data.journal});
+            this.setState({pk: data.pk});
+            this.setState({keywords: data.keywords});
+            this.setState({topics: data.topics});
             this.setState({withInduc: data.with.withInduc});
             this.setState({withGov: data.with.withGov});
             this.setState({withInt: data.with.withInt});
             this.setState({withInterd: data.with.withInterd});
-            this.projectSelector.current.setValue(data.project);
-            this.outcomeSelector.current.setValue(data.outcome);
+            this.setState({projects: data.projects});
+            this.setState({outcomes: data.outcomes});
         }
     }
 
     getAllData = () => {
-
         return {
             error: false,
             date: this.state.date,
-            mentor: this.mentorSelector.current.getValue(),
-            author: this.authorSelector.current.getValue(),
-            journal: this.journalSelector.current.getValue(),
-            paper_id: this.state.paper_id,
+            mentor: this.state.mentor,
+            authors: this.state.authors,
+            journal: this.state.journal,
+            pk: this.state.pk,
             state: this.state.state,
-            keyword: this.keywordSelector.current.getValue(),
-            topic: this.topicSelector.current.getValue(),
+            keywords: this.state.keywords,
+            topics: this.state.topics,
             withInduc: this.state.withInduc,
             withGov: this.state.withGov,
             withInt: this.state.withInt,
             withInterd: this.state.withInterd,
-            project: this.projectSelector.current.getValue(),
-            outcome: this.outcomeSelector.current.getValue(),
+            projects: this.state.projects,
+            outcomes: this.state.outcomes,
         }
     }
 
@@ -102,9 +108,10 @@ class PaperAddDetail extends React.Component {
         return (
             <>
                 <FormGroup row className={classes.formGroup}>
-                    <FormControl className={classes.formControlFix}>
+                    <FormControl className={classes.formControl}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <DatePicker disableFuture autoOk clearable
+                                        inputVariant="outlined"
                                         readOnly={!this.props.edit}
                                         size='medium' variant="dialog"
                                         label="日期" format="yyyy/MM/dd"
@@ -115,42 +122,80 @@ class PaperAddDetail extends React.Component {
                             />
                         </MuiPickersUtilsProvider>
                     </FormControl>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.mentorSelector} readOnly={!this.props.edit} label="指导老师" labelId="mentor_label" query="mentor"/>
-                    </FormControl>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.authorSelector} readOnly={!this.props.edit} label="作者" labelId="student_label" query="author"/>
-                    </FormControl>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.comAuthorSelector} readOnly={!this.props.edit} label="通信作者" labelId="com_label" query="author"/>
+                        <UtilSelector connector={(q, r) => authorListGet(q, 'men', r)}
+                                      render={authorRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.mentor}
+                                      onChange={(value) => this.setState({mentor: value})}
+                                      label="指导老师"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.journalSelector} readOnly={!this.props.edit} label="发表期刊" labelId="journal" query="journal"/>
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'all', r)}
+                                      render={authorRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.authors}
+                                      onChange={(value) => this.setState({authors: value})}
+                                      label="作者"/>
                     </FormControl>
-                    <FormControl className={classes.formControlFix}>
-                        <TextField required label="论文编号" id="paper_id" value={this.state.paper_id} onChange={(event) =>
-                            this.setState({paper_id: event.target.value})
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'all', r)}
+                                      render={authorRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.comAuthors}
+                                      onChange={(value) => this.setState({comAuthors: value})}
+                                      label="通信作者"/>
+                    </FormControl>
+                </FormGroup>
+                <FormGroup row className={classes.formGroup}>
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector connector={(q, r) => journalListGet(q, r)}
+                                      render={journalRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.journal}
+                                      onChange={(value) => this.setState({journal: value})}
+                                      label="发表期刊"/>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                        <TextField required variant="outlined" label="论文编号" id="paper_id" value={this.state.pk} onChange={(event) =>
+                            this.setState({pk: event.target.value})
                         }
                         InputProps={{readOnly: !this.props.edit}}/>
                     </FormControl>
                     <FormControl className={classes.formControlFix}>
-                        <InputLabel id="state-label">收录状态</InputLabel>
-                        <Select id="state" disabled value={this.state.state} onChange={(event) =>
-                            this.setState({state: event.target.value})}>
-                            <MenuItem value={'published'}>已发布</MenuItem>
-                        </Select>
+                        <UtilSelector connector={(q, r) => r([{pk: 'published', name: '已发布'}])}
+                                      render={item => item.name}
+                                      readOnly={true}
+                                      value={this.state.state}
+                                      onChange={(value) => this.setState({state: {pk: 'published', name: '已发布'}})}
+                                      label="收录状态"/>
                     </FormControl>
                 </FormGroup>
                 <Divider/>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.keywordSelector} readOnly={!this.props.edit} allowNew label="关键词" labelId="keyword"
-                                       query="keyword"/>
+                        <UtilSelector multiple allowNew
+                                      buildNew={keywordBuilder}
+                                      connector={(q, r) => keywordListGet(q, r)}
+                                      render={keywordRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.keywords}
+                                      onChange={(value) => {
+                                          this.setState({keywords: value})
+                                      }}
+                                      label="关键词"/>
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.topicSelector} readOnly={!this.props.edit} allowNew label="研究方向" labelId="topic" query="topic"/>
+                        <UtilSelector multiple allowNew
+                                      buildNew={topicBuilder}
+                                      connector={(q, r) => topicListGet(q, r)}
+                                      render={topicRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.topics}
+                                      onChange={(value) => this.setState({topics: value})}
+                                      label="研究方向"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
@@ -182,12 +227,24 @@ class PaperAddDetail extends React.Component {
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <MultiSelector ref={this.projectSelector} readOnly={!this.props.edit} label="关联项目" labelId="project" query="project"/>
+                        <UtilSelector multiple
+                                      connector={(q, r) => projectListGet(q, r)}
+                                      render={projectRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.projects}
+                                      onChange={(value) => this.setState({projects: value})}
+                                      label="关联项目"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row className={classes.formGroup}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <MultiSelector ref={this.outcomeSelector} readOnly={!this.props.edit} label="关联成果" labelId="outcome" query="outcome"/>
+                        <UtilSelector multiple
+                                      connector={(q, r) => outcomeListGet(q, r)}
+                                      render={outcomeRender}
+                                      readOnly={!this.props.edit}
+                                      value={this.state.outcomes}
+                                      onChange={(value) => this.setState({outcomes: value})}
+                                      label="关联成果"/>
                     </FormControl>
                 </FormGroup>
             </>

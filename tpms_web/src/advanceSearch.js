@@ -13,8 +13,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import {Autocomplete} from "@material-ui/lab";
 import RefreshIcon from '@material-ui/icons/Refresh';
 import CloseIcon from '@material-ui/icons/Close';
-import OneSelector from "./utils/oneSelector";
-import MultiSelector from "./utils/multiSelector";
+import UtilSelector from "./utils/utilSelector";
+import {authorListGet, authorRender, keywordListGet, keywordRender, topicListGet, topicRender} from "./utils/connector";
 
 const styles = theme => ({
     adSearchRoot: {
@@ -45,17 +45,14 @@ class AdvanceSearch extends React.Component {
             dateUsage: false,
             startDate: null,
             endDate: null,
-            selectedStudents: [],
-            selectedTopics: [],
-            selectedKeywords: [],
+            mentors: [],
+            firstAuthor: [],
+            comAuthor: [],
+            students: [],
+            topics: [],
+            keywords: [],
             snackOpen: false
         };
-        this.mentorSelector = React.createRef();
-        this.firstAuthorSelector = React.createRef();
-        this.comAuthorSelector = React.createRef();
-        this.studentSelector = React.createRef();
-        this.topicSelector = React.createRef();
-        this.keywordSelector = React.createRef();
     }
 
     thesisOrPaperOptions = [
@@ -67,21 +64,21 @@ class AdvanceSearch extends React.Component {
 
     resetForm = () => {
         this.tempState = this.state
-        this.tempState.mentor = this.mentorSelector.current.getValue()
-        this.tempState.firstAuthor = this.firstAuthorSelector.current.getValue()
-        this.tempState.comAuthor = this.comAuthorSelector.current.getValue()
-        this.tempState.students = this.studentSelector.current.getValue()
-        this.tempState.topics = this.topicSelector.current.getValue()
-        this.tempState.keywords = this.keywordSelector.current.getValue()
+        this.tempState.mentor = this.state.mentors
+        this.tempState.firstAuthor = this.state.firstAuthor
+        this.tempState.comAuthor = this.state.comAuthor
+        this.tempState.students = this.state.students
+        this.tempState.topics = this.state.topics
+        this.tempState.keywords = this.state.keywords
         this.setState({thesisOrPaper: []})
         this.setState({startDate: null})
         this.setState({endDate: null})
-        this.mentorSelector.current.resetValue()
-        this.firstAuthorSelector.current.resetValue()
-        this.comAuthorSelector.current.resetValue()
-        this.studentSelector.current.resetValue()
-        this.topicSelector.current.resetValue()
-        this.keywordSelector.current.resetValue()
+        this.setState({mentors: []})
+        this.setState({firstAuthor: []})
+        this.setState({comAuthor: []})
+        this.setState({students: []})
+        this.setState({topics: []})
+        this.setState({keywords: []})
         this.setState({snackOpen: true})
     }
 
@@ -97,12 +94,12 @@ class AdvanceSearch extends React.Component {
             this.setState({thesisOrPaper: this.tempState.thesisOrPaper})
             this.setState({startDate: this.tempState.startDate})
             this.setState({endDate: this.tempState.endDate})
-            this.mentorSelector.current.setValue(this.tempState.mentor)
-            this.firstAuthorSelector.current.setValue(this.tempState.firstAuthor)
-            this.comAuthorSelector.current.setValue(this.tempState.comAuthor)
-            this.studentSelector.current.setValue(this.tempState.students)
-            this.topicSelector.current.setValue(this.tempState.topics)
-            this.keywordSelector.current.setValue(this.tempState.keywords)
+            this.setState({mentors: this.tempState.mentors})
+            this.setState({firstAuthor: this.tempState.firstAuthor})
+            this.setState({comAuthor: this.tempState.comAuthor})
+            this.setState({students: this.tempState.students})
+            this.setState({topics: this.tempState.topics})
+            this.setState({keywords: this.tempState.keywords})
             this.setState({snackOpen: false})
         }
     }
@@ -112,12 +109,12 @@ class AdvanceSearch extends React.Component {
             thesisOrPaper: this.state.thesisOrPaper,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
-            mentor: this.mentorSelector.current.getValue(),
-            firstAuthor: this.firstAuthorSelector.current.getValue(),
-            comAuthor: this.comAuthorSelector.current.getValue(),
-            students: this.studentSelector.current.getValue(),
-            topics: this.topicSelector.current.getValue(),
-            keywords: this.keywordSelector.current.getValue()
+            mentors: this.state.mentors,
+            firstAuthor: this.state.firstAuthor,
+            comAuthor: this.state.comAuthor,
+            students: this.state.students,
+            topics: this.state.topics,
+            keywords: this.keywords,
         }
     }
 
@@ -140,7 +137,7 @@ class AdvanceSearch extends React.Component {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    variant="standard"
+                                    variant="outlined"
                                     label="论文类型"
                                 />
                             )}
@@ -149,6 +146,7 @@ class AdvanceSearch extends React.Component {
                     <FormControl className={classes.formControlFix}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <DatePicker disableFuture autoOk clearable
+                                        inputVariant="outlined"
                                         size='medium' variant="dialog"
                                         label="起始时间" format="yyyy/MM/dd"
                                         value={this.state.startDate}
@@ -161,6 +159,7 @@ class AdvanceSearch extends React.Component {
                     <FormControl className={classes.formControlFix}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <DatePicker disableFuture autoOk clearable
+                                        inputVariant="outlined"
                                         size='medium' variant="dialog"
                                         label="截止时间" format="yyyy/MM/dd"
                                         minDateMessage="应大于起始时间"
@@ -174,25 +173,49 @@ class AdvanceSearch extends React.Component {
                     </FormControl>
                 </FormGroup>
                 <FormGroup row>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.mentorSelector} label="导师" labelId="mentor_label" query="mentor"/>
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'men', r)}
+                                      render={authorRender}
+                                      value={this.state.mentors}
+                                      onChange={(value) => this.setState({mentors: value})}
+                                      label="导师"/>
                     </FormControl>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.firstAuthorSelector} label="第一作者" labelId="first_author_label" query="first_author"/>
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'fst', r)}
+                                      render={authorRender}
+                                      value={this.state.firstAuthor}
+                                      onChange={(value) => this.setState({firstAuthor: value})}
+                                      label="第一作者"/>
                     </FormControl>
-                    <FormControl className={classes.formControlFix}>
-                        <OneSelector ref={this.comAuthorSelector} label="通信作者" labelId="com_author_label" query="com_author"/>
+                    <FormControl className={classes.formControl}>
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'com', r)}
+                                      render={authorRender}
+                                      value={this.state.comAuthor}
+                                      onChange={(value) => this.setState({comAuthor: value})}
+                                      label="通信作者"/>
                     </FormControl>
                 </FormGroup>
                 <FormGroup row>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.studentSelector} label="学生" labelId='students' query='students' />
+                        <UtilSelector multiple connector={(q, r) => authorListGet(q, 'stu', r)}
+                                      render={authorRender}
+                                      value={this.state.students}
+                                      onChange={(value) => this.setState({students: value})}
+                                      label="学生"/>
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.topicSelector} label="研究方向" labelId="topic" query="topic"/>
+                        <UtilSelector multiple connector={(q, r) => topicListGet(q, r)}
+                                      render={topicRender}
+                                      value={this.state.topics}
+                                      onChange={(value) => this.setState({topics: value})}
+                                      label="研究方向"/>
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                        <MultiSelector ref={this.keywordSelector} label="关键字" labelId="keyword" query="keyword" />
+                        <UtilSelector multiple connector={(q, r) => keywordListGet(q, r)}
+                                      render={keywordRender}
+                                      value={this.state.keywords}
+                                      onChange={(value) => this.setState({keywords: value})}
+                                      label="关键字"/>
                     </FormControl>
                     <IconButton type="reset" className={classes.resetButton} onClick={this.resetForm}>
                         <RefreshIcon />

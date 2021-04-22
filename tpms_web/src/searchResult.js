@@ -91,7 +91,7 @@ class SearchResult extends React.Component {
                     </Typography>
                     <div className={classes.oneLine}>
                         <Typography className={classes.keywordTitle} >关键词：</Typography>
-                        {this.props.result.keyword.map((item) => <Chip key={this.uniqid()} className={classes.myIcon} label={item.name}/>)}
+                        {this.props.result.keywords.map((item) => <Chip key={this.uniqid()} className={classes.myIcon} label={item.name}/>)}
                     </div>
                 </Paper>
                 <Dialog fullScreen open={this.state.dialog} onClose={this.handleDialogClose}
