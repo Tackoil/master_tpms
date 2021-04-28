@@ -1,13 +1,9 @@
 import json
-import logging
 
 from django.http import HttpResponse
+
+from .fuzzySearch import *
 from .models import *
-from django.core import serializers
-
-
-def index(request):
-    return HttpResponse("Hello World.")
 
 
 def main_search(request):
@@ -26,9 +22,15 @@ def journal_save(request):
 def journal_list_get(request):
     if request.method == 'GET':
         query = request.GET.get('q', '')
-        print(query)
+        if query == '':
+            res = Journal.objects.all()
+        else:
+            search_list = Journal.objects.all().values_list('pk', 'name', 'ename', 'shortname')
+            res = fuzzy_search(query, list(search_list), fuzzy_core_journal)
+            res.sort(key=lambda x: x[1])
+            res = map(lambda x: Journal.objects.get(pk=x[0]), res[:5 if len(res) > 5 else len(res)])
         jl = []
-        for item in Journal.objects.all():
+        for item in res:
             jl.append(item.export_to_json())
         jl = json.dumps(jl)
         return HttpResponse(jl)

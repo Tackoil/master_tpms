@@ -59,9 +59,3 @@ class Journal(BaseModel):
     all_field = ['name', 'ename', 'shortname', 'deadline', 'publish']
     all_other_field = {'rate': JournalRating}
 
-
-
-
-
-
-
