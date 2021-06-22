@@ -77,10 +77,8 @@ WSGI_APPLICATION = 'tpms_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': 'tpms_server/my.cnf',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'tpms_database',
     }
 }
 
