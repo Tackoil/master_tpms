@@ -63,6 +63,30 @@ def fuzzy_core_long(query: str, values: list[str]) -> float:
     return float(np.prod(score))
 
 
+# for TJC
+# 'title', 'intro', 'tjc_id', 'keyword(nesting)', 'author(nesting)'
+def fuzzy_core_tjc(query: str, values: list[str]) -> float:
+    title, intro, tjc_id, keyword_list, author_list = values
+    title_pinyin = ' '.join(lazy_pinyin(title)) if title else None
+    query_pinyin = ' '.join(lazy_pinyin(query))
+    div_title = ' '.join(jieba.lcut_for_search(title))
+    div_intro = ' '.join(jieba.lcut_for_search(intro))
+    div_query = ' '.join(jieba.lcut(query))
+    org_score = [
+        fuzz.ratio(query, title),
+        fuzz.partial_ratio(div_query, div_title),
+        fuzz.partial_ratio(query_pinyin, title_pinyin),
+        fuzz.partial_ratio(div_query, div_intro),
+        fuzz.ratio(query, tjc_id),
+    ]
+    score = [
+        *list(map(lambda x: min(100, 101-x)/100, org_score)),
+        *list(map(lambda x: fuzzy_core_short(query, x), keyword_list)),
+        *list(map(lambda x: fuzzy_core_author(query, x), author_list))
+    ]
+    return float(np.prod(score))
+
+
 def fuzzy_search(query: str, search_list: list[tuple], method=fuzzy_core_journal) -> list[tuple]:
     if len(search_list) == 0:
         return []

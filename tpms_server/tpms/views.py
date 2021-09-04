@@ -12,10 +12,10 @@ from .fuzzySearch import *
 from .models import *
 
 
-def fuzzy_search_wrapper(query, model, value_list, core):
+def fuzzy_search_wrapper(query, model, value_list, core, limit=5):
     res = fuzzy_search(query, value_list, core)
     res.sort(key=lambda x: x[1])
-    return map(lambda x: model.objects.get(pk=x[0]), res[:5 if len(res) > 5 else len(res)])
+    return map(lambda x: model.objects.get(pk=x[0]), res[:limit if len(res) > limit else len(res)])
 
 
 def main_search(request):
@@ -67,6 +67,22 @@ def main_search(request):
                 res_b = []
             jl_a = []
             jl_b = []
+            if dt["query"] != '':
+                def get_res(res):
+                    search_list = []
+                    for item in res:
+                        tmp_item = [item.pk, item.title, item.intro, item.tjc_id,
+                                    list(item.keyword.values_list("name")),
+                                    list(item.authors_set.values_list("author__first_name",
+                                                                      "author__last_name",
+                                                                      "author__alter_first_name",
+                                                                      "author__alter_last_name",
+                                                                      "author__author_id"))
+                                    ]
+                        search_list.append(tmp_item)
+                    return fuzzy_search_wrapper(dt["query"], TJC, list(search_list), fuzzy_core_tjc)
+                res_a = get_res(res_a)
+                res_b = get_res(res_b)
             value_list = {
                 "tjc": "",
                 "title": "",
