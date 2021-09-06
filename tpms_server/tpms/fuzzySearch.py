@@ -6,7 +6,7 @@ import numpy as np
 
 # for Journal
 # 'name', 'ename', 'shortname'
-def fuzzy_core_journal(query: str, values: list[str]) -> float:
+def fuzzy_core_journal(query, values):
     name, ename, shortname = values
     ename, shortname, query = \
         ename.lower() if ename else None, \
@@ -21,7 +21,7 @@ def fuzzy_core_journal(query: str, values: list[str]) -> float:
 
 # for Author
 # 'firstname', 'lastname', 'alter_firstname', 'alter_lastname', 'author_id'
-def fuzzy_core_author(query: str, values: list[str]) -> float:
+def fuzzy_core_author(query, values):
     firstname, lastname, alter_firstname, alter_lastname, author_id = values
     firstname, lastname, query = \
         firstname.lower() if firstname else None, \
@@ -42,7 +42,7 @@ def fuzzy_core_author(query: str, values: list[str]) -> float:
 
 # for Keyword / Topic
 # 'name'
-def fuzzy_core_short(query: str, values: list[str]) -> float:
+def fuzzy_core_short(query, values):
     name, = values
     name_pinyin = ' '.join(lazy_pinyin(name)) if name else None
     org_score = [fuzz.ratio(query, name), fuzz.partial_ratio(lazy_pinyin(query), name_pinyin)]
@@ -52,7 +52,7 @@ def fuzzy_core_short(query: str, values: list[str]) -> float:
 
 # for Project / TJC_title
 # 'name'
-def fuzzy_core_long(query: str, values: list[str]) -> float:
+def fuzzy_core_long(query, values):
     name, = values
     name_pinyin = ' '.join(lazy_pinyin(name)) if name else None
     div_name = ' '.join(jieba.lcut(name))
@@ -65,7 +65,7 @@ def fuzzy_core_long(query: str, values: list[str]) -> float:
 
 # for TJC
 # 'title', 'intro', 'tjc_id', 'keyword(nesting)', 'author(nesting)'
-def fuzzy_core_tjc(query: str, values: list[str]) -> float:
+def fuzzy_core_tjc(query, values):
     title, intro, tjc_id, keyword_list, author_list = values
     title_pinyin = ' '.join(lazy_pinyin(title)) if title else None
     query_pinyin = ' '.join(lazy_pinyin(query))
@@ -87,7 +87,7 @@ def fuzzy_core_tjc(query: str, values: list[str]) -> float:
     return float(np.prod(score))
 
 
-def fuzzy_search(query: str, search_list: list[tuple], method=fuzzy_core_journal) -> list[tuple]:
+def fuzzy_search(query, search_list, method=fuzzy_core_journal):
     if len(search_list) == 0:
         return []
     if len(search_list) == 1:
