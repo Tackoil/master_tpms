@@ -1,6 +1,7 @@
 .idea/
 __pycache__/
-tpms_server/tpms/migrations/
+tpms_server/tpms/migrations/*.py
+!tpms_server/tpms/migrations/__init__.py
 tpms_server/up_image/
 tpms_server/tpms_database
 tpms_server/up_file/
